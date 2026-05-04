@@ -50,9 +50,6 @@ export default function MainPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="bg-white rounded-xl shadow-2xl p-10 max-w-2xl w-full">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Share a Secret</h1>
-        <p className="text-gray-600 mb-4">
-          Share sensitive information via a one-time link. Links expire in 5 minutes.
-        </p>
         {secretData ? (
           <ShareResult 
             data={secretData} 
