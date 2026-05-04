@@ -68,7 +68,7 @@ app.get('/api/secrets/:id/check', (req: Request, res: Response): void => {
 });
 
 // Serve static files from Vite build
-const publicPath = path.join(__dirname, './public');
+const publicPath = path.join(process.cwd(), 'dist/public');
 app.use(express.static(publicPath));
 
 // Catch-all route for SPA

@@ -8,6 +8,7 @@
     "dev": "node --loader ts-node/esm src/server.ts",
     "dev:client": "vite",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:client\"",
+    "dev:watch": "concurrently \"vite build --watch\" \"node --loader ts-node/esm src/server.ts\"",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "tsc",
