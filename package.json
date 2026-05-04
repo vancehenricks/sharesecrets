@@ -12,7 +12,9 @@
     "build:client": "vite build",
     "build:server": "tsc",
     "preview": "vite preview",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "test": "npm run test:integration",
+    "test:integration": "bash tests/integration-simple.sh"
   },
   "repository": {
     "type": "git",

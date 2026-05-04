@@ -5,6 +5,7 @@ interface SecretResponse {
   shareUrl: string;
   expiresAt: number;
   expiresIn: number;
+  code?: string;
 }
 
 interface ShareResultProps {
@@ -15,6 +16,7 @@ interface ShareResultProps {
 export default function ShareResult({ data, onCreateNew }: ShareResultProps) {
   const [expiryTime, setExpiryTime] = useState('5 minutes');
   const [copyLabel, setCopyLabel] = useState('Copy Link');
+  const [copyCodeLabel, setCopyCodeLabel] = useState('Copy Code');
 
   useEffect(() => {
     const expiresAt = data.expiresAt;
@@ -45,6 +47,17 @@ export default function ShareResult({ data, onCreateNew }: ShareResultProps) {
     });
   };
 
+  const handleCopyCode = () => {
+    if (data.code) {
+      navigator.clipboard.writeText(data.code).then(() => {
+        setCopyCodeLabel('Copied!');
+        setTimeout(() => {
+          setCopyCodeLabel('Copy Code');
+        }, 2000);
+      });
+    }
+  };
+
   return (
     <div className="result-container">
       <div className="success-message">
@@ -61,6 +74,28 @@ export default function ShareResult({ data, onCreateNew }: ShareResultProps) {
             {copyLabel}
           </button>
         </div>
+        
+        {data.code && (
+          <>
+            <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#fff3cd', borderRadius: '4px', borderLeft: '4px solid #ffc107' }}>
+              <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: '#856404' }}>⚠️ Important: Share this code separately</p>
+              <p style={{ margin: '0 0 10px 0', color: '#856404' }}>The viewer needs this code to decrypt the secret:</p>
+              <div className="link-container">
+                <input
+                  type="text"
+                  readOnly
+                  className="link-input"
+                  value={data.code}
+                  style={{ fontFamily: 'monospace', fontSize: '18px', letterSpacing: '2px', textAlign: 'center' }}
+                />
+                <button className="btn btn-secondary" onClick={handleCopyCode}>
+                  {copyCodeLabel}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+        
         <p className="expiry-info">⏱️ This link expires in <span>{expiryTime}</span></p>
       </div>
       <button 

@@ -2,7 +2,7 @@ import crypto from 'crypto';
 
 export interface Secret {
   id: string;
-  content: string;
+  encryptedContent: string;
   createdAt: number;
   expiresAt: number;
 }
@@ -15,14 +15,14 @@ class SecretStore {
     return crypto.randomBytes(16).toString('hex');
   }
 
-  createSecret(content: string): { id: string; expiresAt: number } {
+  createSecret(encryptedContent: string): { id: string; expiresAt: number } {
     const id = this.generateId();
     const now = Date.now();
     const expiresAt = now + this.EXPIRATION_TIME;
 
     const secret: Secret = {
       id,
-      content,
+      encryptedContent,
       createdAt: now,
       expiresAt
     };
@@ -51,7 +51,7 @@ class SecretStore {
 
     // Delete after retrieving (one-time access)
     this.secrets.delete(id);
-    return secret.content;
+    return secret.encryptedContent;
   }
 
   isValid(id: string): boolean {

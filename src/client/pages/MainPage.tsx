@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import ShareForm from '../components/ShareForm';
 import ShareResult from '../components/ShareResult';
+import { generateCode, encryptSecret } from '../utils/encryption';
 
 interface SecretResponse {
   id: string;
   shareUrl: string;
   expiresAt: number;
   expiresIn: number;
+  code?: string;
 }
 
 export default function MainPage() {
@@ -21,15 +23,20 @@ export default function MainPage() {
 
     setLoading(true);
     try {
+      // Generate code and encrypt content on client-side
+      const code = generateCode();
+      const encryptedContent = await encryptSecret(content, code);
+
       const response = await fetch('/api/secrets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ encryptedContent }),
       });
 
       if (!response.ok) throw new Error('Failed to create secret');
 
       const data = (await response.json()) as SecretResponse;
+      data.code = code;
       setSecretData(data);
     } catch (error) {
       console.error('Error:', error);

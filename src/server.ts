@@ -16,14 +16,14 @@ app.use(express.json());
 // API Routes
 app.post('/api/secrets', (req: Request, res: Response): void => {
   try {
-    const { content } = req.body;
+    const { encryptedContent } = req.body;
 
-    if (!content || typeof content !== 'string') {
-      res.status(400).json({ error: 'Content is required and must be a string' });
+    if (!encryptedContent || typeof encryptedContent !== 'string') {
+      res.status(400).json({ error: 'Encrypted content is required and must be a string' });
       return;
     }
 
-    const { id, expiresAt } = secretStore.createSecret(content);
+    const { id, expiresAt } = secretStore.createSecret(encryptedContent);
     const shareUrl = `${req.protocol}://${req.get('host')}/share/${id}`;
 
     res.json({
@@ -41,14 +41,14 @@ app.post('/api/secrets', (req: Request, res: Response): void => {
 app.get('/api/secrets/:id', (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
-    const content = secretStore.getSecret(id);
+    const encryptedContent = secretStore.getSecret(id);
 
-    if (!content) {
+    if (!encryptedContent) {
       res.status(404).json({ error: 'Secret not found or has expired' });
       return;
     }
 
-    res.json({ content });
+    res.json({ encryptedContent });
   } catch (error) {
     console.error('Error retrieving secret:', error);
     res.status(500).json({ error: 'Failed to retrieve secret' });
