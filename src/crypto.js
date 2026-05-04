@@ -26,7 +26,6 @@ function toUint8Array(input){
   if(input instanceof Uint8Array) return input
   return new Uint8Array(input)
 }
-
 export async function deriveKeyFromPin(pin, salt){
   // `salt` may be Uint8Array, ArrayBuffer, or base64url string
   const saltArr = toUint8Array(salt)
@@ -72,37 +71,3 @@ export async function hashKey(keyOrRaw){
 
 export { base64UrlEncode as encodeBase64Url, base64UrlDecode as decodeBase64Url }
 
-  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pin), {name:'PBKDF2'}, false, ['deriveBits','deriveKey'])
-  const key = await crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:200000,hash:'SHA-256'}, keyMaterial, {name:'AES-GCM',length:256}, true, ['encrypt','decrypt'])
-  return key
-}
-
-export async function encryptText(plain, pin, salt){
-  const key = await deriveKeyFromPin(pin, salt)
-  const iv = crypto.getRandomValues(new Uint8Array(12))
-  const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(plain))
-  return {ciphertext: arrayBufferToBase64(ct), iv: arrayBufferToBase64(iv)}
-}
-
-export async function decryptText(ciphertextBase64, key, ivBase64){
-  const ct = base64ToArrayBuffer(ciphertextBase64)
-  const iv = base64ToArrayBuffer(ivBase64)
-  const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, ct)
-  return new TextDecoder().decode(pt)
-}
-
-export async function hashKey(key){
-  const raw = await crypto.subtle.exportKey('raw', key)
-  return await crypto.subtle.digest('SHA-256', raw)
-}
-
-function arrayBufferToBase64(buf){
-  return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/=/g,'')
-}
-function base64ToArrayBuffer(str){
-  while(str.length%4) str+='='
-  const bin = atob(str)
-  const arr = new Uint8Array(bin.length)
-  for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i)
-  return arr.buffer
-}

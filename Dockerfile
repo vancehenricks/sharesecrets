@@ -16,4 +16,5 @@ COPY --from=builder /app/dist ./dist
 COPY server ./server
 EXPOSE 3000
 ENV PORT=3000
-CMD ["node","server/index.js"]
+# Run migrations at container start, then start the server
+CMD ["sh","-c","npm run migrate && node server/index.js"]

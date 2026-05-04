@@ -1,11 +1,17 @@
 {
   "name": "one-time-secret",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "migrate": "node server/migrate.js",
+    "worker": "node server/expiry_worker.js",
+    "start:all": "npm run migrate && concurrently \"node server/index.js\" \"npm run worker\"",
+    "build-and-start:all": "npm run build && npm run migrate && concurrently \"node server/index.js\" \"npm run worker\"",
+    "docker:up": "docker compose up --build"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -14,6 +20,7 @@
     "dotenv": "^16.0.3"
   },
   "devDependencies": {
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "concurrently": "^7.6.0"
   }
 }

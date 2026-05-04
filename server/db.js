@@ -1,6 +1,7 @@
-const {Pool} = require('pg')
+import { Pool } from 'pg'
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-module.exports = {
-  query: (text, params)=>pool.query(text, params),
-  pool
-}
+
+export const query = (text, params) => pool.query(text, params)
+export { pool }
+export default { query, pool }

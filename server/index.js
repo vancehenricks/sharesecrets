@@ -1,9 +1,13 @@
-require('dotenv').config()
-const express = require('express')
-const path = require('path')
-const {v4: uuidv4} = require('uuid')
-const crypto = require('crypto')
-const db = require('./db')
+import 'dotenv/config'
+import express from 'express'
+import path from 'path'
+import { v4 as uuidv4 } from 'uuid'
+import crypto from 'crypto'
+import * as db from './db.js'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 app.use(express.json())
