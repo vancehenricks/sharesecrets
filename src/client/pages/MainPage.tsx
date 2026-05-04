@@ -35,7 +35,7 @@ export default function MainPage() {
       const response = await fetch('/api/secrets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ encryptedContent }),
+        body: JSON.stringify({ encryptedContent, secretLength: content.length }),
       });
 
       if (!response.ok) throw new Error('Failed to create secret');

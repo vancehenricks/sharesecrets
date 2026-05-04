@@ -17,15 +17,20 @@ app.use(express.json());
 // API Routes
 app.post('/api/secrets', (req: Request, res: Response): void => {
   try {
-    const { encryptedContent } = req.body;
+    const { encryptedContent, secretLength } = req.body;
 
     if (!encryptedContent || typeof encryptedContent !== 'string') {
       res.status(400).json({ error: 'Encrypted content is required and must be a string' });
       return;
     }
 
-    if (encryptedContent.length > 50) {
-      res.status(400).json({ error: 'Encrypted content must be at most 50 characters' });
+    if (typeof secretLength !== 'number' || !Number.isInteger(secretLength) || secretLength < 0) {
+      res.status(400).json({ error: 'secretLength must be a non-negative integer' });
+      return;
+    }
+
+    if (secretLength > 50) {
+      res.status(400).json({ error: 'Secret length must be at most 50 characters' });
       return;
     }
 

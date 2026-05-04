@@ -39,7 +39,7 @@ log_section "POST /api/secrets - Create Secret"
 log_test "Creating secret with encrypted content"
 RESPONSE=$(curl -s -X POST "$API_URL/api/secrets" \
   -H "Content-Type: application/json" \
-  -d '{"encryptedContent":"ZCg/wm9sWWGXW8oc1Nb8fXdT9J21nw6ciCKMueNNzzzGi88DtV=="}')
+  -d '{"encryptedContent":"ZCg/wm9sWWGXW8oc1Nb8fXdT9J21nw6ciCKMueNNzzzGi88DtV==","secretLength":1}')
 
 if echo "$RESPONSE" | grep -q '"id"'; then
   log_pass "Response contains id"
@@ -90,7 +90,7 @@ log_section "One-Time Access"
 log_test "Creating new secret for one-time access test"
 RESPONSE=$(curl -s -X POST "$API_URL/api/secrets" \
   -H "Content-Type: application/json" \
-  -d '{"encryptedContent":"one-time-test"}')
+  -d '{"encryptedContent":"one-time-test","secretLength":13}')
 ONE_TIME_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*' | cut -d'"' -f4 | head -1)
 
 log_test "First retrieval"
@@ -124,7 +124,7 @@ log_section "GET /api/secrets/:id/check - Validity"
 log_test "Creating secret for validity check"
 RESPONSE=$(curl -s -X POST "$API_URL/api/secrets" \
   -H "Content-Type: application/json" \
-  -d '{"encryptedContent":"validity-test"}')
+  -d '{"encryptedContent":"validity-test","secretLength":13}')
 CHECK_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*' | cut -d'"' -f4 | head -1)
 
 log_test "Checking if secret is valid"
@@ -149,12 +149,12 @@ log_section "Multiple Secrets"
 log_test "Creating two secrets"
 RESP1=$(curl -s -X POST "$API_URL/api/secrets" \
   -H "Content-Type: application/json" \
-  -d '{"encryptedContent":"secret-a"}')
+  -d '{"encryptedContent":"secret-a","secretLength":8}')
 ID1=$(echo "$RESP1" | grep -o '"id":"[^"]*' | cut -d'"' -f4 | head -1)
 
 RESP2=$(curl -s -X POST "$API_URL/api/secrets" \
   -H "Content-Type: application/json" \
-  -d '{"encryptedContent":"secret-b"}')
+  -d '{"encryptedContent":"secret-b","secretLength":8}')
 ID2=$(echo "$RESP2" | grep -o '"id":"[^"]*' | cut -d'"' -f4 | head -1)
 
 if [ "$ID1" != "$ID2" ]; then
@@ -177,7 +177,7 @@ log_section "HTTP Status Codes"
 log_test "POST creates returns 200"
 STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$API_URL/api/secrets" \
   -H "Content-Type: application/json" \
-  -d '{"encryptedContent":"test-status"}')
+  -d '{"encryptedContent":"test-status","secretLength":11}')
 if [ "$STATUS" = "200" ]; then
   log_pass "POST returns 200"
 else
