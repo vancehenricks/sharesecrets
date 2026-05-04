@@ -1,0 +1,240 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 12px;
+  font-size: 28px;
+}
+
+h2 {
+  color: #444;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.description {
+  color: #666;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 100%;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: #667eea;
+  color: white;
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #764ba2;
+}
+
+.result-container {
+  margin-top: 30px;
+}
+
+.result-container.hidden {
+  display: none;
+}
+
+.success-message {
+  background: #f0f9ff;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.link-container {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.link-input {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  background: white;
+}
+
+.expiry-info {
+  color: #666;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.secret-container {
+  text-align: center;
+}
+
+.secret-container.hidden {
+  display: none;
+}
+
+.error-container.hidden {
+  display: none;
+}
+
+.content-box {
+  background: #f5f5f5;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+.content-box pre {
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.info-message {
+  color: #666;
+  font-size: 14px;
+  margin: 20px 0;
+}
+
+.error-message {
+  background: #fef2f2;
+  border: 2px solid #fca5a5;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+}
+
+.error-message h2 {
+  color: #dc2626;
+  margin-bottom: 12px;
+}
+
+.error-message p {
+  color: #991b1b;
+  margin-bottom: 24px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 24px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .link-container {
+    flex-direction: column;
+  }
+
+  .link-input {
+    width: 100%;
+  }
+}
