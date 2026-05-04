@@ -47,9 +47,9 @@ export default function MainPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="bg-white rounded-xl shadow-2xl p-10 max-w-2xl w-full">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Share a Secret</h1>
+    <div className="min-h-screen flex items-center justify-center px-3 md:px-4 py-4">
+      <div className="bg-white rounded-lg md:rounded-xl shadow-2xl p-5 md:p-10 max-w-2xl w-full">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">Share a Secret</h1>
         {secretData ? (
           <ShareResult 
             data={secretData} 

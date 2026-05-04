@@ -83,18 +83,18 @@ export default function ViewPage({ secretId }: ViewPageProps) {
   return (
     <div className="container">
       <div className="card">
-        <h1>View Secret</h1>
+        <h1 className="text-xl md:text-2xl">View Secret</h1>
         
         {state === 'loading' && (
           <div className="loading">
-            <p>Loading secret...</p>
+            <p className="text-sm md:text-base">Loading secret...</p>
           </div>
         )}
 
         {state === 'decrypt-needed' && (
           <div className="decrypt-container">
             <div className="form-group">
-              <label htmlFor="codeInput" style={{ display: 'block', textAlign: 'center' }}>Enter 6-digit Code:</label>
+              <label htmlFor="codeInput" style={{ display: 'block', textAlign: 'center' }} className="text-sm md:text-base">Enter 6-digit Code:</label>
               <input
                 id="codeInput"
                 type="text"
@@ -102,10 +102,10 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                 maxLength={6}
                 value={code}
                 onChange={handleCodeChange}
-                className="code-input"
+                className="code-input text-lg md:text-2xl"
               />
               <button
-                className="btn btn-primary"
+                className="btn btn-primary text-sm md:text-base"
                 onClick={handleDecrypt}
                 disabled={decrypting || code.length !== 6}
               >
@@ -118,11 +118,11 @@ export default function ViewPage({ secretId }: ViewPageProps) {
         {state === 'success' && (
           <div className="secret-container">
             <div className="secret-content">
-              <h2>Secret Content:</h2>
+              <h2 className="text-base md:text-lg">Secret Content:</h2>
               <div className="content-box">
                 <div className="secret-toolbar">
                   <button
-                    className="eye-toggle"
+                    className="eye-toggle text-lg md:text-xl"
                     onClick={() => setShowSecret((s) => !s)}
                     aria-pressed={showSecret}
                     title={showSecret ? 'Hide secret' : 'Show secret'}
@@ -130,14 +130,14 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                     {showSecret ? '🙈' : '👁️'}
                   </button>
                 </div>
-                <pre className={`secret-text ${showSecret ? '' : 'masked'}`}>
+                <pre className={`secret-text text-xs md:text-sm ${showSecret ? '' : 'masked'}`}>
                   {showSecret ? content : content.replace(/[^\n]/g, '•')}
                 </pre>
               </div>
-              <p className="info-message">
+              <p className="info-message text-xs md:text-sm">
                 ℹ️ This secret has been viewed and can no longer be accessed.
               </p>
-              <a href="/" className="btn btn-primary">
+              <a href="/" className="btn btn-primary text-sm md:text-base block">
                 Share Another Secret
               </a>
             </div>
@@ -147,9 +147,9 @@ export default function ViewPage({ secretId }: ViewPageProps) {
         {state === 'error' && (
           <div className="error-container">
             <div className="error-message">
-              <h2>Secret Not Found</h2>
-              <p>{error}</p>
-              <a href="/" className="btn btn-primary">
+              <h2 className="text-base md:text-lg">Secret Not Found</h2>
+              <p className="text-xs md:text-sm">{error}</p>
+              <a href="/" className="btn btn-primary text-sm md:text-base block">
                 Create a New Secret
               </a>
             </div>
