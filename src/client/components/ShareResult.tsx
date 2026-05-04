@@ -59,52 +59,53 @@ export default function ShareResult({ data, onCreateNew }: ShareResultProps) {
   };
 
   return (
-    <div className="result-container">
-      <div className="success-message">
-        <h2>Link Generated!</h2>
-        <p>Share this link with others:</p>
-        <div className="link-container">
+    <div className="w-full">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-gray-800">Link Generated!</h2>
+        <p className="text-gray-700 mt-2">Share this link with others:</p>
+        <div className="flex gap-3 mt-4">
           <input
             type="text"
             readOnly
-            className="link-input"
+            className="flex-1 px-3 py-2 border rounded-md bg-white font-mono text-sm"
             value={data.shareUrl}
           />
-          <button className="btn btn-secondary" onClick={handleCopy}>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md" onClick={handleCopy}>
             {copyLabel}
           </button>
         </div>
-        
+
         {data.code && (
-          <>
-            <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#fff3cd', borderRadius: '4px', borderLeft: '4px solid #ffc107' }}>
-              <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: '#856404' }}>⚠️ Important: Share this code separately</p>
-              <p style={{ margin: '0 0 10px 0', color: '#856404' }}>The viewer needs this code to decrypt the secret:</p>
-              <div className="link-container">
-                <input
-                  type="text"
-                  readOnly
-                  className="link-input"
-                  value={data.code}
-                  style={{ fontFamily: 'monospace', fontSize: '18px', letterSpacing: '2px', textAlign: 'center' }}
-                />
-                <button className="btn btn-secondary" onClick={handleCopyCode}>
-                  {copyCodeLabel}
-                </button>
-              </div>
+          <div className="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-md">
+            <p className="m-0 font-semibold text-yellow-800">⚠️ Important: Share this code separately</p>
+            <p className="text-sm text-yellow-800 mt-1">This code is required to decrypt the secret. It is shown only once.</p>
+            <p className="text-sm text-gray-600 mt-2">Encryption happens in your browser; the server stores only ciphertext and cannot read the secret.</p>
+
+            <div className="flex gap-3 mt-4">
+              <input
+                type="text"
+                readOnly
+                className="flex-1 px-3 py-2 border rounded-md bg-white font-mono text-lg text-center tracking-widest"
+                value={data.code}
+              />
+              <button className="px-4 py-2 bg-yellow-600 text-white rounded-md" onClick={handleCopyCode}>
+                {copyCodeLabel}
+              </button>
             </div>
-          </>
+          </div>
         )}
-        
-        <p className="expiry-info">⏱️ This link expires in <span>{expiryTime}</span></p>
+
+        <p className="text-gray-600 mt-4">⏱️ This link expires in <span className="font-medium">{expiryTime}</span></p>
       </div>
-      <button 
-        className="btn btn-primary" 
-        onClick={onCreateNew}
-        style={{ marginTop: '20px' }}
-      >
-        Share Another Secret
-      </button>
+
+      <div className="mt-4">
+        <button
+          className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-md"
+          onClick={onCreateNew}
+        >
+          Share Another Secret
+        </button>
+      </div>
     </div>
   );
 }
