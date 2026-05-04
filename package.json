@@ -13,8 +13,8 @@
     "build:server": "tsc",
     "preview": "vite preview",
     "start": "node dist/server.js",
-    "test": "npm run test:integration",
-    "test:integration": "bash tests/integration-simple.sh"
+    "test": "npx jest",
+    "test:integration": "bash tests/integration.sh"
   },
   "repository": {
     "type": "git",
