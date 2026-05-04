@@ -53,10 +53,6 @@ export default function MainPage() {
         <p className="text-gray-600 mb-4">
           Share sensitive information via a one-time link. Links expire in 5 minutes.
         </p>
-        <p className="text-sm text-gray-500 mb-6">
-          The secret is encrypted locally in your browser before upload — the server never sees the plaintext.
-        </p>
-
         {secretData ? (
           <ShareResult 
             data={secretData} 
