@@ -102,15 +102,7 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                 maxLength={6}
                 value={code}
                 onChange={handleCodeChange}
-                style={{
-                  display: 'block',
-                  margin: '12px auto',
-                  fontSize: '24px',
-                  letterSpacing: '8px',
-                  textAlign: 'center',
-                  fontFamily: 'monospace',
-                  padding: '12px',
-                }}
+                className="code-input"
               />
               <button
                 className="btn btn-primary"

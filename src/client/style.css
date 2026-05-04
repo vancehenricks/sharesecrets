@@ -20,14 +20,30 @@ body {
 
 .container {
   width: 100%;
-  max-width: 600px;
+  max-width: 680px;
+  padding: 0 16px;
+  margin: 0 auto;
 }
 
 .card {
   background: white;
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  padding: 40px;
+  padding: 32px;
+}
+
+/* Code input used on the decrypt page */
+.code-input {
+  display: block;
+  margin: 12px auto;
+  font-size: 22px;
+  letter-spacing: 8px;
+  text-align: center;
+  font-family: monospace;
+  padding: 12px;
+  width: 220px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -280,6 +296,12 @@ textarea:focus {
   }
 
   .link-input {
+    width: 100%;
+  }
+
+  .code-input {
+    font-size: 18px;
+    letter-spacing: 6px;
     width: 100%;
   }
 }
