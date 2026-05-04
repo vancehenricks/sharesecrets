@@ -15,6 +15,16 @@ interface SecretContentResponse {
   content: string;
 }
 
+// Countdown management: keep a single interval and helper to clear it
+let countdownId: number | null = null;
+
+function clearCountdown() {
+  if (countdownId !== null) {
+    clearInterval(countdownId);
+    countdownId = null;
+  }
+}
+
 const app = document.getElementById('app') as HTMLDivElement;
 
 function render() {
@@ -29,6 +39,8 @@ function render() {
 }
 
 function renderMainPage() {
+  // Stop any previous countdown when re-rendering the main page
+  clearCountdown();
   app.innerHTML = `
     <div class="container">
       <div class="card">
@@ -88,18 +100,25 @@ function renderMainPage() {
       resultContainer.classList.remove('hidden');
       secretInput.value = '';
 
-      // Update expiry countdown
-      let remaining = Math.floor(data.expiresIn / 1000);
+      // Use expiresAt (absolute ms) to compute remaining reliably
+      clearCountdown();
       const expirySpan = document.getElementById('expiryTime') as HTMLSpanElement;
+      const expiresAt = data.expiresAt;
 
-      const countdown = setInterval(() => {
-        remaining--;
-        if (remaining <= 0) {
-          clearInterval(countdown);
+      function updateExpiryDisplay() {
+        const secsLeft = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
+        if (secsLeft <= 0) {
           expirySpan.textContent = 'Expired';
+          clearCountdown();
         } else {
-          expirySpan.textContent = `${remaining} seconds`;
+          expirySpan.textContent = `${secsLeft} seconds`;
         }
+      }
+
+      // Update immediately and then every second, computing from expiresAt
+      updateExpiryDisplay();
+      countdownId = window.setInterval(() => {
+        updateExpiryDisplay();
       }, 1000);
     } catch (error) {
       console.error('Error:', error);

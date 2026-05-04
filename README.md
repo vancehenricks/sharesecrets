@@ -113,7 +113,3 @@ Response:
 3. Click "Generate Share Link"
 4. Share the generated URL with others
 5. They can access it once - after viewing, it's deleted
-
-## License
-
-ISC
