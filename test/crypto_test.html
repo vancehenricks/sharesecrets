@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Crypto Test</title>
+  </head>
+  <body>
+    <h1>Crypto Helpers Test</h1>
+    <pre id="out">running...</pre>
+    <script type="module">
+      import { encryptText, deriveKeyFromPin, decryptText, hashKey, decodeBase64Url } from '/src/crypto.js'
+
+      async function run(){
+        const pin = 'abc123'
+        const secret = 'this is a test secret'
+        const res = await encryptText(secret, pin)
+        const {ciphertext, iv, salt} = res
+        const key = await deriveKeyFromPin(pin, salt)
+        const keyHash = await hashKey(key)
+        const plain = await decryptText(ciphertext, key, iv)
+        const ok = plain === secret
+        document.getElementById('out').textContent = JSON.stringify({ok, plain, ciphertext, iv, salt, keyHash}, null, 2)
+      }
+      run().catch(e=>document.getElementById('out').textContent = 'error: '+e)
+    </script>
+  </body>
+</html>
