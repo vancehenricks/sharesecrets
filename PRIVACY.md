@@ -1,9 +1,5 @@
 # Privacy Policy
 
-**Last updated:** May 6, 2026
-
----
-
 ## Summary
 
 Share Secrets is designed with privacy and minimal data collection in mind. The core principle is **zero-trust**: encryption and decryption occur entirely in the user's browser. The server never receives plaintext secrets or user passphrases.
