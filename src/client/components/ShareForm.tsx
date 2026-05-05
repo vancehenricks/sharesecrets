@@ -27,7 +27,7 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
           <li>The link expires in 5 minutes and can be opened only once.</li>
         </ol>
       </div>
-      <label htmlFor="secretInput" className="text-sm md:text-base">Your Secret:</label>
+      <label htmlFor="secretInput" className="text-sm md:text-base">Your Secret</label>
       <div className="textarea-toolbar" style={{display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '0.5rem'}}>
         <button
           type="button"
