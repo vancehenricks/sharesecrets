@@ -146,18 +146,10 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                     </button>
 
                     <button
+                      className="eye-toggle copy-btn"
                       onClick={handleCopy}
                       title="Copy secret"
                       type="button"
-                      style={{
-                        padding: '0.4rem 0.75rem',
-                        borderRadius: '6px',
-                        border: '1px solid rgba(0,0,0,0.08)',
-                        background: '#6b46c1',
-                        color: 'white',
-                        fontSize: '0.9rem',
-                        cursor: 'pointer'
-                      }}
                     >
                       {copied ? 'Copied' : 'Copy'}
                     </button>
