@@ -31,7 +31,7 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
       <div className="textarea-wrapper">
         <button
           type="button"
-          className="eye-toggle text-sm md:text-base btn-secondary"
+          className="eye-toggle copy-btn"
           onClick={() => setShowSecret((s) => !s)}
           aria-pressed={showSecret}
           title={showSecret ? 'Hide secret' : 'Show secret'}

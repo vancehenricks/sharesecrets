@@ -240,6 +240,16 @@ textarea:focus {
   background: rgba(0, 0, 0, 0.03);
 }
 
+.copy-btn {
+  background: #6b46c1;
+  color: white;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.copy-btn:hover {
+  background: #5a3aa8;
+}
+
 .secret-text {
   margin: 0;
   font-family: 'Courier New', monospace;
