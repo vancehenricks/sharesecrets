@@ -135,14 +135,14 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                 <div className="secret-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '0.5rem' }}>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button
-                      className="eye-toggle text-lg md:text-xl"
+                      className="eye-toggle text-sm md:text-base btn-secondary"
                       onClick={() => setShowSecret((s) => !s)}
                       aria-pressed={showSecret}
                       title={showSecret ? 'Hide secret' : 'Show secret'}
                       type="button"
-                      style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                      style={{ cursor: 'pointer' }}
                     >
-                      {showSecret ? '🙈' : '👁️'}
+                      {showSecret ? 'Hide' : 'Show'}
                     </button>
 
                     <button
