@@ -14,7 +14,8 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
     setContent('');
   };
 
-  const masked = content.replace(/[^]/g, '•');
+  const masked = content.replace(/[^
+]/g, '•');
 
   return (
     <div className="form-group">
@@ -49,7 +50,7 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
           className={`text-sm md:text-base ${showSecret ? '' : 'masked'}`}
         />
 
-        <pre className={`overlay-mask text-sm md:text-base ${showSecret ? 'hidden' : ''}`}>{masked}</pre>
+        <pre className={`overlay-mask secret-text masked text-sm md:text-base ${showSecret ? 'hidden' : ''}`} style={{ whiteSpace: 'pre' }}>{masked}</pre>
       </div>
 
       <button
