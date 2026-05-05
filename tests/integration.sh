@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Simple Integration Tests for OneTimeShare API
+# Integration Tests for OneTimeShare API
 # Tests all endpoints using curl
 
 RED='\033[0;31m'
