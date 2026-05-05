@@ -14,7 +14,7 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
     setContent('');
   };
 
-  const masked = content.replace(/[^\s]/g, '•');
+  const masked = content.replace(/[^\n]/g, '•');
 
   return (
     <div className="form-group">
