@@ -167,10 +167,10 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                 <pre
                   className={`secret-text text-xs md:text-sm ${showSecret ? '' : 'masked'}`}
                   style={{
-                    whiteSpace: 'pre-wrap',
+                    whiteSpace: 'pre',
+                    textAlign: 'left',
                     userSelect: 'text',
                     overflowX: 'auto',
-                    wordBreak: 'break-word',
                     fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace',
                     padding: '1rem',
                     background: 'rgba(0,0,0,0.03)',
