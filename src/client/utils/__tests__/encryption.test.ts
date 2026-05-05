@@ -1,4 +1,4 @@
-import { generateCode, encryptSecret, decryptSecret } from '../encryption';
+import { generateCode, encryptSecret, decryptSecret, encryptFile, isFilePayload, parseFilePayload } from '../encryption';
 
 describe('Encryption Utils', () => {
   describe('generateCode', () => {
@@ -170,6 +170,38 @@ describe('Encryption Utils', () => {
       const encrypted = await encryptSecret(secret, code);
       
       await expect(decryptSecret(encrypted, 'not-a-number')).rejects.toThrow();
+    });
+  });
+
+  describe('file encryption', () => {
+    it('encrypts and decrypts small binary file', async () => {
+      const code = '123456';
+      const file = new File([new Uint8Array([1,2,3,4,5])], 'test.bin', { type: 'application/octet-stream' });
+      const encrypted = await encryptFile(file, code);
+
+      const decryptedJson = await decryptSecret(encrypted, code);
+      expect(isFilePayload(decryptedJson)).toBe(true);
+
+      const payload = parseFilePayload(decryptedJson);
+      expect(payload.name).toBe('test.bin');
+      expect(payload.mimeType).toBe('application/octet-stream');
+
+      const bytes = Uint8Array.from(atob(payload.data), (c) => c.charCodeAt(0));
+      expect(Array.from(bytes)).toEqual([1,2,3,4,5]);
+    });
+
+    it('handles empty text file', async () => {
+      const code = generateCode();
+      const file = new File([''], 'empty.txt', { type: 'text/plain' });
+      const encrypted = await encryptFile(file, code);
+
+      const decryptedJson = await decryptSecret(encrypted, code);
+      expect(isFilePayload(decryptedJson)).toBe(true);
+
+      const payload = parseFilePayload(decryptedJson);
+      expect(payload.name).toBe('empty.txt');
+      const decoded = atob(payload.data);
+      expect(decoded).toBe('');
     });
   });
 });
