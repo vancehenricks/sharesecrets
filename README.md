@@ -4,19 +4,19 @@ OneTimeShare makes it trivial to share secrets with a single-use link. Links exp
 
 Key idea: Zero-trust by design — all encryption and decryption happen in the browser. The server stores only ciphertext and never sees plaintext or the user's passphrase.
 
-Features
+## Features
 - Client-side encryption (AES-256-GCM) — secrets are encrypted in-browser before upload
 - One-time access: a secret can be retrieved exactly once
 - Automatic expiration (default: 5 minutes)
 - Minimal server: in-memory storage, no persistent database required
 - Open source (MIT)
 
-Security & privacy
+## Security & privacy
 - Zero-trust server: the server stores ciphertext only. If the server is compromised, attackers cannot read secrets without the client-side key.
 - Secrets are decrypted only in the browser. Do not send passphrases or plaintext to the server.
 - Follow safe sharing practices: transmit the share link and the optional code separately when sharing.
 
-Quickstart
+## Quickstart
 
 Prerequisites
 - Node.js 18+
@@ -46,11 +46,11 @@ npm run build:client  # build frontend
 npm run build:server  # compile server
 ```
 
-API (overview)
+## API (overview)
 - POST /api/secrets — upload ciphertext (client encrypts), returns share id and metadata
 - GET /api/secrets/:id — retrieve ciphertext (server deletes after first read)
 - GET /api/secrets/:id/check — check if id is valid / not expired
 
-Open source & License
-This project is released under the MIT License. See LICENSE for details.
+
+### This project is released under the MIT License. See LICENSE for details.
 
