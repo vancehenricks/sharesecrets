@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { decryptSecret } from '../utils/encryption';
+import Footer from '../components/Footer';
 
 interface SecretContentResponse {
   encryptedContent: string;
@@ -193,6 +194,7 @@ export default function ViewPage({ secretId }: ViewPageProps) {
             </div>
           </div>
         )}
+        <Footer />
       </div>
     </div>
   );

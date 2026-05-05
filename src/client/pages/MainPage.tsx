@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ShareForm from '../components/ShareForm';
 import ShareResult from '../components/ShareResult';
+import Footer from '../components/Footer';
 import { generateCode, encryptSecret } from '../utils/encryption';
 
 interface SecretResponse {
@@ -58,6 +59,7 @@ export default function MainPage() {
         ) : (
           <ShareForm onShare={handleShare} loading={loading} />
         )}
+        <Footer />
       </div>
     </div>
   );

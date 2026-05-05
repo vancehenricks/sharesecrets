@@ -387,3 +387,24 @@ textarea.masked {
 textarea.masked::selection {
   background: rgba(0,0,0,0.1);
 }
+
+/* Footer styling */
+.app-footer {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: #6b7280; /* gray-500 */
+}
+
+.app-footer .app-footer-inner {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.app-footer a {
+  color: inherit;
+  text-decoration: underline;
+}
