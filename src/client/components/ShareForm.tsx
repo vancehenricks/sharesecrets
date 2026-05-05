@@ -28,7 +28,7 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
         </ol>
       </div>
       <label htmlFor="secretInput" className="text-sm md:text-base">Your Secret:</label>
-      <div className="textarea-wrapper">
+      <div className="textarea-toolbar" style={{display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '0.5rem'}}>
         <button
           type="button"
           className="eye-toggle copy-btn"
@@ -38,7 +38,9 @@ export default function ShareForm({ onShare, loading }: ShareFormProps) {
         >
           {showSecret ? 'Hide' : 'Show'}
         </button>
+      </div>
 
+      <div className="textarea-wrapper">
         <textarea
           id="secretInput"
           placeholder="Enter your secret here..."

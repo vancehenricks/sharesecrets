@@ -213,9 +213,11 @@ textarea:focus {
 }
 
 .secret-toolbar {
-  position: absolute;
-  top: 8px;
-  right: 8px;
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
   z-index: 2;
 }
 
@@ -351,6 +353,13 @@ textarea:focus {
   position: relative;
 }
 
+.textarea-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .textarea-wrapper textarea {
   position: relative;
   z-index: 0;
@@ -373,9 +382,8 @@ textarea:focus {
 }
 
 .textarea-wrapper .eye-toggle {
-  position: absolute;
-  top: 8px;
-  right: 8px;
+  position: static;
+  margin-left: auto;
   z-index: 2;
 }
 
