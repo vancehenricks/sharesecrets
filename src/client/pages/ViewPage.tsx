@@ -131,32 +131,31 @@ export default function ViewPage({ secretId }: ViewPageProps) {
         {state === 'success' && (
           <div className="secret-container">
             <div className="secret-content">
-              <h2 className="text-base md:text-lg">Secret Content:</h2>
-              <div className="content-box">
-                <div className="secret-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button
-                      className="eye-toggle copy-btn"
-                      onClick={() => setShowSecret((s) => !s)}
-                      aria-pressed={showSecret}
-                      title={showSecret ? 'Hide secret' : 'Show secret'}
-                      type="button"
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {showSecret ? 'Hide' : 'Show'}
-                    </button>
+              <div className="secret-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    className="eye-toggle copy-btn"
+                    onClick={() => setShowSecret((s) => !s)}
+                    aria-pressed={showSecret}
+                    title={showSecret ? 'Hide secret' : 'Show secret'}
+                    type="button"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {showSecret ? 'Hide' : 'Show'}
+                  </button>
 
-                    <button
-                      className="eye-toggle copy-btn"
-                      onClick={handleCopy}
-                      title="Copy secret"
-                      type="button"
-                    >
-                      {copied ? 'Copied' : 'Copy'}
-                    </button>
-                  </div>
+                  <button
+                    className="eye-toggle copy-btn"
+                    onClick={handleCopy}
+                    title="Copy secret"
+                    type="button"
+                  >
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
                 </div>
+              </div>
 
+              <div className="content-box">
                 <pre
                   className={`secret-text text-xs md:text-sm ${showSecret ? '' : 'masked'}`}
                   style={{
