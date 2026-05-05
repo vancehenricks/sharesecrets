@@ -164,8 +164,8 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                     userSelect: 'text',
                     overflowX: 'auto',
                     fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace',
-                    padding: '1rem',
-                    background: 'rgba(0,0,0,0.03)',
+                    padding: 0,
+                    background: 'transparent',
                     borderRadius: '6px'
                   }}
                 >
