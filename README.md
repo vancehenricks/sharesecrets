@@ -6,6 +6,7 @@ Key idea: Zero-trust by design — all encryption and decryption happen in the b
 
 ## Features
 - Client-side encryption (AES-256-GCM) — secrets are encrypted in-browser before upload
+- File uploads (client-side encrypted) — upload files up to 1 MB; files are encrypted in-browser and stored as ciphertext just like text secrets
 - One-time access: a secret can be retrieved exactly once
 - Automatic expiration (default: 5 minutes)
 - Minimal server: in-memory storage, no persistent database required
@@ -47,7 +48,7 @@ npm run build:server  # compile server
 ```
 
 ## API (overview)
-- POST /api/secrets — upload ciphertext (client encrypts), returns share id and metadata
+- POST /api/secrets — upload ciphertext (client encrypts). Supports encrypted text or file payloads (files up to 1 MB); returns share id and metadata
 - GET /api/secrets/:id — retrieve ciphertext (server deletes after first read)
 - GET /api/secrets/:id/check — check if id is valid / not expired
 
