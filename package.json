@@ -1,7 +1,7 @@
 {
-  "name": "onetimeshare",
+  "name": "sharesecrets",
   "version": "1.0.0",
-  "description": "Share secrets via one-time links",
+  "description": "Share secrets safely via one-time links",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
@@ -19,15 +19,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vancehenricks/onetimeshare.git"
+    "url": "git+https://github.com/vancehenricks/sharesecrets.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vancehenricks/onetimeshare/issues"
+    "url": "https://github.com/vancehenricks/sharesecrets/issues"
   },
-  "homepage": "https://github.com/vancehenricks/onetimeshare#readme",
+  "homepage": "https://github.com/vancehenricks/sharesecrets#readme",
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

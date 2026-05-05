@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# End-to-end (system) Tests for OneTimeShare API
+# End-to-end (system) Tests for sharesecrets API
 # Tests all endpoints using curl
 
 # Color handling (respect NO_COLOR)
@@ -30,7 +30,7 @@ log_test() { printf "%b\n" "${BLUE}→${NC} $1"; }
 log_section() { printf "\n%b\n" "${YELLOW}## $1${NC}"; }
 
 printf "%b\n" "${BLUE}╔════════════════════════════════════════╗"
-printf "%b\n" "║  OneTimeShare API End-to-End Tests     ║"
+printf "%b\n" "║  sharesecrets API End-to-End Tests     ║"
 printf "%b\n" "╚════════════════════════════════════════╝${NC}\n"
 
 # Test 1: Server connectivity

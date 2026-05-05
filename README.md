@@ -1,6 +1,6 @@
-# OneTimeShare
+# Share Secrets
 
-OneTimeShare makes it trivial to share secrets with a single-use link. Links expire by default after 5 minutes and can only be viewed once.
+Share Secrets makes it trivial to share secrets safely with a single-use link. Links expire by default after 5 minutes and can only be viewed once.
 
 Key idea: Zero-trust by design — all encryption and decryption happen in the browser. The server stores only ciphertext and never sees plaintext or the user's passphrase.
 
@@ -35,7 +35,7 @@ npm start
 ```
 Visit: http://localhost:3000
 
-Demo: https://onetimeshare.cornerofthe.net
+Demo: https://sharesecrets.cornerofthe.net
 
 Development
 ```bash
