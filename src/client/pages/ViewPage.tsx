@@ -19,6 +19,7 @@ export default function ViewPage({ secretId }: ViewPageProps) {
   const [decrypting, setDecrypting] = useState(false);
   const [encryptedData, setEncryptedData] = useState<string | null>(null);
   const [showSecret, setShowSecret] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     fetchSecret(secretId)
@@ -75,6 +76,17 @@ export default function ViewPage({ secretId }: ViewPageProps) {
     }
   };
 
+  const handleCopy = async () => {
+    try {
+      if (!content) return;
+      await navigator.clipboard.writeText(content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      alert('Failed to copy secret');
+    }
+  };
+
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 6);
     setCode(value);
@@ -94,7 +106,7 @@ export default function ViewPage({ secretId }: ViewPageProps) {
         {state === 'decrypt-needed' && (
           <div className="decrypt-container">
             <div className="form-group">
-              <label htmlFor="codeInput" style={{ display: 'block', textAlign: 'center' }} className="text-sm md:text-base">Enter 6-digit Code:</label>
+              <label htmlFor="codeInput" className="text-sm md:text-base">Enter 6-digit Code:</label>
               <input
                 id="codeInput"
                 type="text"
@@ -126,11 +138,20 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                     onClick={() => setShowSecret((s) => !s)}
                     aria-pressed={showSecret}
                     title={showSecret ? 'Hide secret' : 'Show secret'}
+                    type="button"
                   >
                     {showSecret ? '🙈' : '👁️'}
                   </button>
+                  <button
+                    className="btn copy-btn text-sm md:text-base ml-2"
+                    onClick={handleCopy}
+                    title="Copy secret"
+                    type="button"
+                  >
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
                 </div>
-                <pre className={`secret-text text-xs md:text-sm ${showSecret ? '' : 'masked'}`}>
+                <pre className={`secret-text text-xs md:text-sm ${showSecret ? '' : 'masked'}`} style={{ whiteSpace: 'pre-wrap', userSelect: 'text' }}>
                   {showSecret ? content : content.replace(/[^\n]/g, '•')}
                 </pre>
               </div>
