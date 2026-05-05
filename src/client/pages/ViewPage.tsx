@@ -132,26 +132,51 @@ export default function ViewPage({ secretId }: ViewPageProps) {
             <div className="secret-content">
               <h2 className="text-base md:text-lg">Secret Content:</h2>
               <div className="content-box">
-                <div className="secret-toolbar">
-                  <button
-                    className="eye-toggle text-lg md:text-xl"
-                    onClick={() => setShowSecret((s) => !s)}
-                    aria-pressed={showSecret}
-                    title={showSecret ? 'Hide secret' : 'Show secret'}
-                    type="button"
-                  >
-                    {showSecret ? '🙈' : '👁️'}
-                  </button>
-                  <button
-                    className="btn copy-btn text-sm md:text-base ml-2"
-                    onClick={handleCopy}
-                    title="Copy secret"
-                    type="button"
-                  >
-                    {copied ? 'Copied' : 'Copy'}
-                  </button>
+                <div className="secret-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      className="eye-toggle text-lg md:text-xl"
+                      onClick={() => setShowSecret((s) => !s)}
+                      aria-pressed={showSecret}
+                      title={showSecret ? 'Hide secret' : 'Show secret'}
+                      type="button"
+                      style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                    >
+                      {showSecret ? '🙈' : '👁️'}
+                    </button>
+
+                    <button
+                      onClick={handleCopy}
+                      title="Copy secret"
+                      type="button"
+                      style={{
+                        padding: '0.4rem 0.75rem',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        background: '#6b46c1',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {copied ? 'Copied' : 'Copy'}
+                    </button>
+                  </div>
                 </div>
-                <pre className={`secret-text text-xs md:text-sm ${showSecret ? '' : 'masked'}`} style={{ whiteSpace: 'pre-wrap', userSelect: 'text' }}>
+
+                <pre
+                  className={`secret-text text-xs md:text-sm ${showSecret ? '' : 'masked'}`}
+                  style={{
+                    whiteSpace: 'pre-wrap',
+                    userSelect: 'text',
+                    overflowX: 'auto',
+                    wordBreak: 'break-word',
+                    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace',
+                    padding: '1rem',
+                    background: 'rgba(0,0,0,0.03)',
+                    borderRadius: '6px'
+                  }}
+                >
                   {showSecret ? content : content.replace(/[^\n]/g, '•')}
                 </pre>
               </div>
