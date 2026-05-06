@@ -36,6 +36,35 @@ export default function ViewPage({ secretId }: ViewPageProps) {
       });
   }, [secretId]);
 
+  useEffect(() => {
+    // Auto-decrypt if code is present in URL fragment as #c=123456
+    if (typeof window === 'undefined') return;
+    if (state !== 'decrypt-needed' || !encryptedData) return;
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const codeFromHash = params.get('c');
+    if (codeFromHash && /^\d{6}$/.test(codeFromHash)) {
+      (async () => {
+        setCode(codeFromHash);
+        setDecrypting(true);
+        try {
+          const decrypted = await decryptSecret(encryptedData, codeFromHash);
+          if (isFilePayload(decrypted)) {
+            setFilePayload(parseFilePayload(decrypted));
+          } else {
+            setContent(decrypted);
+          }
+          setState('success');
+        } catch (err) {
+          const errMessage = err instanceof Error ? err.message : 'Decryption failed';
+          setError(errMessage);
+          setState('error');
+        } finally {
+          setDecrypting(false);
+        }
+      })();
+    }
+  }, [state, encryptedData]);
+
   async function fetchSecret(id: string): Promise<string> {
     const response = await fetch(`/api/secrets/${id}`);
 
@@ -147,6 +176,7 @@ export default function ViewPage({ secretId }: ViewPageProps) {
                 {decrypting ? 'Decrypting...' : 'Decrypt Secret'}
               </button>
             </div>
+            <p className="text-xs text-gray-600 mt-3">If you opened a combined link the code may have been auto-applied from the URL fragment and the page will attempt to reveal the secret automatically.</p>
           </div>
         )}
 
