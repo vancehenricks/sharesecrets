@@ -15,7 +15,7 @@ Key idea: Zero-trust by design — all encryption and decryption happen in the b
 ## Security & privacy
 - Zero-trust server: the server stores ciphertext only. If the server is compromised, attackers cannot read secrets without the client-side key.
 - Secrets are decrypted only in the browser. Do not send passphrases or plaintext to the server.
-- Follow safe sharing practices: transmit the share link and the optional code separately when sharing.
+- Follow safe sharing practices: transmit the share link and the code separately when sharing.
 
 ## Quickstart
 
