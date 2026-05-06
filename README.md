@@ -18,14 +18,14 @@ Key idea: Zero-trust by design — all encryption and decryption happen in the b
 - Follow safe sharing practices: transmit the share link and the code separately when sharing.
 
 ### Combined link (optional)
-A "combined link" embeds the 6-digit code into the URL fragment so a single link automatically applies the code and reveals the secret in the browser. Example: https://site/s/<id>#c=123456
+Example: https://site/s/<id>#c=123456
 
-Why fragment: URL fragments (the part after #) are not sent to the server in HTTP requests, so the server and intermediate proxies do not see the code. This reduces the risk of server-side logging or referrer leakage.
+Why fragments
+URL fragments (the part after #) are not sent in HTTP requests, so servers and proxies don't see the code. This reduces server-side logging and referrer leakage.
 
 Trade-offs and safety:
-- Fragments are accessible to client-side JavaScript, browser extensions, and appear in browser history and screenshots. They can be leaked if a page script or extension reads and transmits them.
-- Use combined links only when you trust the recipient and understand they may appear in local history or screenshots.
-- If you need maximum privacy, share the link and code separately (default behavior).
+- Fragments are visible to client-side JS, extensions, browser history, and screenshots; they can be leaked if read/transmitted.
+- Use combined links only when convenience outweighs leakage risk. For maximum privacy, share link and code separately.
 
 ## Quickstart
 
