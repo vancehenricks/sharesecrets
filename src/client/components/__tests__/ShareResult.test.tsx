@@ -42,6 +42,13 @@ it('displays link and copies link and code', async () => {
   });
   expect((navigator as any).clipboard.writeText).toHaveBeenCalledWith(data.code);
 
+  const copyCombinedBtn = screen.getByRole('button', { name: /copy combined link/i });
+  await act(async () => {
+    fireEvent.click(copyCombinedBtn);
+  });
+  expect((navigator as any).clipboard.writeText).toHaveBeenCalledWith(`${data.shareUrl}#c=${data.code}`);
+  expect(copyCombinedBtn).toHaveTextContent(/copied/i);
+
   // advance timers to let expiry update
   act(() => {
     jest.advanceTimersByTime(2000);

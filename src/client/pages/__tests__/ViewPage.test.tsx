@@ -206,6 +206,32 @@ describe('ViewPage', () => {
         expect(screen.getByText(/decryption failed/i)).toBeInTheDocument();
       });
     });
+
+    it('auto-decrypts when code present in URL fragment', async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ encryptedContent: mockEncryptedContent }),
+      });
+
+      (encryptionUtils.decryptSecret as jest.Mock).mockResolvedValueOnce('auto secret');
+      (encryptionUtils.isFilePayload as jest.Mock).mockReturnValueOnce(false);
+
+      // set fragment before rendering
+      window.location.hash = '#c=123456';
+
+      render(<ViewPage secretId="test-id" />);
+
+      await waitFor(() => {
+        expect(encryptionUtils.decryptSecret).toHaveBeenCalledWith(mockEncryptedContent, '123456');
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/has been viewed and can no longer be accessed/i)).toBeInTheDocument();
+      });
+
+      // clean up
+      window.location.hash = '';
+    });
   });
 
   describe('text secret display', () => {
