@@ -1,109 +1,85 @@
-import { generateCode, encryptSecret, decryptSecret, encryptFile, isFilePayload, parseFilePayload } from '../encryption';
+import { generateKey, encryptSecret, decryptSecret, encryptFile, isFilePayload, parseFilePayload } from '../encryption';
 
 describe('Encryption Utils', () => {
-  describe('generateCode', () => {
-    it('generates 6-digit code', () => {
-      const code = generateCode();
-      expect(code).toMatch(/^\d{6}$/);
+  describe('generateKey', () => {
+    it('generates a base64url string', () => {
+      const key = generateKey();
+      expect(typeof key).toBe('string');
+      expect(key).toMatch(/^[A-Za-z0-9_-]+$/);
     });
 
-    it('generates codes in valid range', () => {
-      for (let i = 0; i < 100; i++) {
-        const code = generateCode();
-        const num = parseInt(code);
-        expect(num).toBeGreaterThanOrEqual(0);
-        expect(num).toBeLessThan(1000000);
-      }
+    it('generates 32-byte keys (43 base64url chars)', () => {
+      const key = generateKey();
+      expect(key.length).toBe(43);
     });
 
-    it('pads with zeros', () => {
-      for (let i = 0; i < 50; i++) {
-        const code = generateCode();
-        expect(code).toHaveLength(6);
-      }
+    it('generates unique keys each time', () => {
+      const keys = new Set(Array.from({ length: 20 }, generateKey));
+      expect(keys.size).toBe(20);
     });
   });
 
   describe('encryptSecret', () => {
     it('encrypts and returns non-empty string', async () => {
-      const secret = 'My secret';
-      const code = '123456';
-      const encrypted = await encryptSecret(secret, code);
-      
+      const encrypted = await encryptSecret('My secret', generateKey());
       expect(encrypted).toBeTruthy();
       expect(typeof encrypted).toBe('string');
-      expect(encrypted.length).toBeGreaterThan(0);
     });
 
     it('encrypted output differs from input', async () => {
       const secret = 'My secret';
-      const code = '123456';
-      const encrypted = await encryptSecret(secret, code);
-      
+      const encrypted = await encryptSecret(secret, generateKey());
       expect(encrypted).not.toBe(secret);
       expect(encrypted).not.toContain(secret);
     });
 
     it('different secrets produce different encryptions', async () => {
-      const code = '123456';
-      const encrypted1 = await encryptSecret('Secret 1', code);
-      const encrypted2 = await encryptSecret('Secret 2', code);
-      
+      const key = generateKey();
+      const encrypted1 = await encryptSecret('Secret 1', key);
+      const encrypted2 = await encryptSecret('Secret 2', key);
       expect(encrypted1).not.toBe(encrypted2);
     });
 
-    it('same secret with same code encrypts differently each time (random IV)', async () => {
-      const secret = 'My secret';
-      const code = '123456';
-      const encrypted1 = await encryptSecret(secret, code);
-      const encrypted2 = await encryptSecret(secret, code);
-      
+    it('same secret with same key encrypts differently each time (random IV)', async () => {
+      const key = generateKey();
+      const encrypted1 = await encryptSecret('My secret', key);
+      const encrypted2 = await encryptSecret('My secret', key);
       expect(encrypted1).not.toBe(encrypted2);
     });
 
     it('handles empty string', async () => {
-      const encrypted = await encryptSecret('', '123456');
+      const encrypted = await encryptSecret('', generateKey());
       expect(encrypted).toBeTruthy();
     });
 
     it('handles special characters', async () => {
-      const secret = '!@#$%^&*()_+-=[]{}|;:,.<>?/';
-      const code = '123456';
-      const encrypted = await encryptSecret(secret, code);
+      const encrypted = await encryptSecret('!@#$%^&*()_+-=[]{}|;:,.<>?/', generateKey());
       expect(encrypted).toBeTruthy();
     });
 
     it('handles unicode characters', async () => {
-      const secret = '你好世界 مرحبا بالعالم';
-      const code = '123456';
-      const encrypted = await encryptSecret(secret, code);
+      const encrypted = await encryptSecret('你好世界 مرحبا بالعالم', generateKey());
       expect(encrypted).toBeTruthy();
     });
 
     it('handles long secrets', async () => {
-      const secret = 'x'.repeat(10000);
-      const code = '123456';
-      const encrypted = await encryptSecret(secret, code);
+      const encrypted = await encryptSecret('x'.repeat(10000), generateKey());
       expect(encrypted).toBeTruthy();
     });
   });
 
   describe('decryptSecret', () => {
-    it('decrypts with correct code', async () => {
+    it('decrypts with correct key', async () => {
       const secret = 'My secret';
-      const code = '123456';
-      const encrypted = await encryptSecret(secret, code);
-      const decrypted = await decryptSecret(encrypted, code);
-      
+      const key = generateKey();
+      const encrypted = await encryptSecret(secret, key);
+      const decrypted = await decryptSecret(encrypted, key);
       expect(decrypted).toBe(secret);
     });
 
-    it('fails with wrong code', async () => {
-      const secret = 'My secret';
-      const code = '123456';
-      const encrypted = await encryptSecret(secret, code);
-      
-      await expect(decryptSecret(encrypted, '654321')).rejects.toThrow();
+    it('fails with wrong key', async () => {
+      const encrypted = await encryptSecret('My secret', generateKey());
+      await expect(decryptSecret(encrypted, generateKey())).rejects.toThrow();
     });
 
     it('round-trip encryption/decryption for various strings', async () => {
@@ -117,69 +93,41 @@ describe('Encryption Utils', () => {
       ];
 
       for (const secret of testCases) {
-        const code = generateCode();
-        const encrypted = await encryptSecret(secret, code);
-        const decrypted = await decryptSecret(encrypted, code);
+        const key = generateKey();
+        const encrypted = await encryptSecret(secret, key);
+        const decrypted = await decryptSecret(encrypted, key);
         expect(decrypted).toBe(secret);
       }
     });
 
-    it('wrong code produces error with correct message', async () => {
-      const secret = 'My secret';
-      const code = '123456';
-      const encrypted = await encryptSecret(secret, code);
-      
-      await expect(decryptSecret(encrypted, '999999')).rejects.toThrow('Decryption failed');
+    it('wrong key produces error with correct message', async () => {
+      const encrypted = await encryptSecret('My secret', generateKey());
+      await expect(decryptSecret(encrypted, generateKey())).rejects.toThrow('Decryption failed');
     });
 
     it('corrupted encrypted data fails', async () => {
-      const code = '123456';
-      const corrupted = 'not-valid-base64-or-corrupted-data';
-      
-      await expect(decryptSecret(corrupted, code)).rejects.toThrow();
+      await expect(decryptSecret('not-valid-base64-or-corrupted-data', generateKey())).rejects.toThrow();
     });
   });
 
   describe('encryption security', () => {
     it('IV is different for each encryption', async () => {
-      const secret = 'test';
-      const code = '123456';
-      
-      const encrypted1 = await encryptSecret(secret, code);
-      const encrypted2 = await encryptSecret(secret, code);
-      
-      const decrypted1 = await decryptSecret(encrypted1, code);
-      const decrypted2 = await decryptSecret(encrypted2, code);
-      
-      expect(decrypted1).toBe(secret);
-      expect(decrypted2).toBe(secret);
+      const key = generateKey();
+      const encrypted1 = await encryptSecret('test', key);
+      const encrypted2 = await encryptSecret('test', key);
+      expect(await decryptSecret(encrypted1, key)).toBe('test');
+      expect(await decryptSecret(encrypted2, key)).toBe('test');
       expect(encrypted1).not.toBe(encrypted2);
-    });
-
-    it('code validation - empty code fails', async () => {
-      const secret = 'test';
-      const code = generateCode();
-      const encrypted = await encryptSecret(secret, code);
-      
-      await expect(decryptSecret(encrypted, '')).rejects.toThrow();
-    });
-
-    it('code validation - wrong format fails', async () => {
-      const secret = 'test';
-      const code = generateCode();
-      const encrypted = await encryptSecret(secret, code);
-      
-      await expect(decryptSecret(encrypted, 'not-a-number')).rejects.toThrow();
     });
   });
 
   describe('file encryption', () => {
     it('encrypts and decrypts small binary file', async () => {
-      const code = '123456';
+      const key = generateKey();
       const file = new File([new Uint8Array([1,2,3,4,5])], 'test.bin', { type: 'application/octet-stream' });
-      const encrypted = await encryptFile(file, code);
+      const encrypted = await encryptFile(file, key);
 
-      const decryptedJson = await decryptSecret(encrypted, code);
+      const decryptedJson = await decryptSecret(encrypted, key);
       expect(isFilePayload(decryptedJson)).toBe(true);
 
       const payload = parseFilePayload(decryptedJson);
@@ -191,27 +139,26 @@ describe('Encryption Utils', () => {
     });
 
     it('handles empty text file', async () => {
-      const code = generateCode();
+      const key = generateKey();
       const file = new File([''], 'empty.txt', { type: 'text/plain' });
-      const encrypted = await encryptFile(file, code);
+      const encrypted = await encryptFile(file, key);
 
-      const decryptedJson = await decryptSecret(encrypted, code);
+      const decryptedJson = await decryptSecret(encrypted, key);
       expect(isFilePayload(decryptedJson)).toBe(true);
 
       const payload = parseFilePayload(decryptedJson);
       expect(payload.name).toBe('empty.txt');
-      const decoded = atob(payload.data);
-      expect(decoded).toBe('');
+      expect(atob(payload.data)).toBe('');
     });
 
     it('handles large file (near 1MB limit)', async () => {
-      const code = generateCode();
-      const largeBuffer = new Uint8Array(900 * 1024); // 900KB
+      const key = generateKey();
+      const largeBuffer = new Uint8Array(900 * 1024);
       largeBuffer.fill(0xAB);
       const file = new File([largeBuffer], 'large.bin', { type: 'application/octet-stream' });
 
-      const encrypted = await encryptFile(file, code);
-      const decryptedJson = await decryptSecret(encrypted, code);
+      const encrypted = await encryptFile(file, key);
+      const decryptedJson = await decryptSecret(encrypted, key);
       expect(isFilePayload(decryptedJson)).toBe(true);
 
       const payload = parseFilePayload(decryptedJson);
@@ -221,21 +168,21 @@ describe('Encryption Utils', () => {
     });
 
     it('preserves special characters in file name', async () => {
-      const code = generateCode();
+      const key = generateKey();
       const file = new File(['data'], 'my file (1) [final].txt', { type: 'text/plain' });
-      const encrypted = await encryptFile(file, code);
+      const encrypted = await encryptFile(file, key);
 
-      const decryptedJson = await decryptSecret(encrypted, code);
+      const decryptedJson = await decryptSecret(encrypted, key);
       const payload = parseFilePayload(decryptedJson);
       expect(payload.name).toBe('my file (1) [final].txt');
     });
 
     it('uses application/octet-stream when file type is empty', async () => {
-      const code = generateCode();
+      const key = generateKey();
       const file = new File(['data'], 'noextension', { type: '' });
-      const encrypted = await encryptFile(file, code);
+      const encrypted = await encryptFile(file, key);
 
-      const decryptedJson = await decryptSecret(encrypted, code);
+      const decryptedJson = await decryptSecret(encrypted, key);
       const payload = parseFilePayload(decryptedJson);
       expect(payload.mimeType).toBe('application/octet-stream');
     });

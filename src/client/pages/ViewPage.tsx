@@ -11,59 +11,44 @@ interface ViewPageProps {
   secretId: string;
 }
 
-type LoadingState = 'loading' | 'decrypt-needed' | 'success' | 'error';
+type LoadingState = 'loading' | 'success' | 'error';
 
 export default function ViewPage({ secretId }: ViewPageProps) {
   const [state, setState] = useState<LoadingState>('loading');
   const [content, setContent] = useState('');
   const [filePayload, setFilePayload] = useState<FilePayload | null>(null);
   const [error, setError] = useState('');
-  const [code, setCode] = useState('');
-  const [decrypting, setDecrypting] = useState(false);
-  const [encryptedData, setEncryptedData] = useState<string | null>(null);
   const [showSecret, setShowSecret] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    fetchSecret(secretId)
-      .then((encrypted) => {
-        setEncryptedData(encrypted);
-        setState('decrypt-needed');
-      })
-      .catch((err) => {
-        setError(err.message);
-        setState('error');
-      });
-  }, [secretId]);
+    async function load() {
+      try {
+        const encrypted = await fetchSecret(secretId);
 
-  useEffect(() => {
-    // Auto-decrypt if code is present in URL fragment as #c=123456
-    if (typeof window === 'undefined') return;
-    if (state !== 'decrypt-needed' || !encryptedData) return;
-    const params = new URLSearchParams(window.location.hash.slice(1));
-    const codeFromHash = params.get('c');
-    if (codeFromHash && /^\d{6}$/.test(codeFromHash)) {
-      (async () => {
-        setCode(codeFromHash);
-        setDecrypting(true);
-        try {
-          const decrypted = await decryptSecret(encryptedData, codeFromHash);
-          if (isFilePayload(decrypted)) {
-            setFilePayload(parseFilePayload(decrypted));
-          } else {
-            setContent(decrypted);
-          }
-          setState('success');
-        } catch (err) {
-          const errMessage = err instanceof Error ? err.message : 'Decryption failed';
-          setError(errMessage);
+        const params = new URLSearchParams(window.location.hash.slice(1));
+        const key = params.get('k');
+        if (!key) {
+          setError('No decryption key in URL. Make sure you opened the full shared link.');
           setState('error');
-        } finally {
-          setDecrypting(false);
+          return;
         }
-      })();
+
+        const decrypted = await decryptSecret(encrypted, key);
+        if (isFilePayload(decrypted)) {
+          setFilePayload(parseFilePayload(decrypted));
+        } else {
+          setContent(decrypted);
+        }
+        setState('success');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load secret.');
+        setState('error');
+      }
     }
-  }, [state, encryptedData]);
+
+    load();
+  }, [secretId]);
 
   async function fetchSecret(id: string): Promise<string> {
     const response = await fetch(`/api/secrets/${id}`);
@@ -80,45 +65,13 @@ export default function ViewPage({ secretId }: ViewPageProps) {
     return data.encryptedContent;
   }
 
-  const handleDecrypt = async () => {
-    if (!code.trim()) {
-      alert('Please enter the 6-digit code');
-      return;
-    }
-
-    if (!/^\d{6}$/.test(code)) {
-      alert('Code must be exactly 6 digits');
-      return;
-    }
-
-    setDecrypting(true);
-    try {
-      if (!encryptedData) {
-        throw new Error('No encrypted data available');
-      }
-      const decrypted = await decryptSecret(encryptedData, code);
-      if (isFilePayload(decrypted)) {
-        setFilePayload(parseFilePayload(decrypted));
-      } else {
-        setContent(decrypted);
-      }
-      setState('success');
-    } catch (err) {
-      const errMessage = err instanceof Error ? err.message : 'Decryption failed';
-      setError(errMessage);
-      setState('error');
-    } finally {
-      setDecrypting(false);
-    }
-  };
-
   const handleCopy = async () => {
     try {
       if (!content) return;
       await navigator.clipboard.writeText(content);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
+    } catch {
       alert('Failed to copy secret');
     }
   };
@@ -139,44 +92,14 @@ export default function ViewPage({ secretId }: ViewPageProps) {
     URL.revokeObjectURL(url);
   };
 
-  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-    setCode(value);
-  };
-
   return (
     <div className="container">
       <div className="card">
         <h1 className="text-xl md:text-2xl">View Secret</h1>
-        
+
         {state === 'loading' && (
           <div className="loading">
             <p className="text-sm md:text-base">Loading secret...</p>
-          </div>
-        )}
-
-        {state === 'decrypt-needed' && (
-          <div className="decrypt-container">
-            <div className="form-group">
-              <label htmlFor="codeInput" className="text-sm md:text-base">Enter 6-digit Code:</label>
-              <input
-                id="codeInput"
-                type="text"
-                placeholder="000000"
-                maxLength={6}
-                value={code}
-                onChange={handleCodeChange}
-                className="code-input text-lg md:text-2xl"
-              />
-              <button
-                className="btn btn-primary text-sm md:text-base"
-                onClick={handleDecrypt}
-                disabled={decrypting || code.length !== 6}
-              >
-                {decrypting ? 'Decrypting...' : 'Decrypt Secret'}
-              </button>
-            </div>
-            <p className="text-xs text-gray-600 mt-3">If you opened a combined link the code may have been auto-applied from the URL fragment and the page will attempt to reveal the secret automatically.</p>
           </div>
         )}
 

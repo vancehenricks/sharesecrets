@@ -3,18 +3,15 @@ import ShareForm from '../components/ShareForm';
 import type { ShareInput } from '../components/ShareForm';
 import ShareResult from '../components/ShareResult';
 import Footer from '../components/Footer';
-import { generateCode, encryptSecret, encryptFile } from '../utils/encryption';
+import { generateKey, encryptSecret, encryptFile } from '../utils/encryption';
 
-interface SecretResponse {
-  id: string;
-  shareUrl: string;
+interface SecretData {
+  combinedUrl: string;
   expiresAt: number;
-  expiresIn: number;
-  code?: string;
 }
 
 export default function MainPage() {
-  const [secretData, setSecretData] = useState<SecretResponse | null>(null);
+  const [secretData, setSecretData] = useState<SecretData | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleShare = async (input: ShareInput) => {
@@ -25,11 +22,11 @@ export default function MainPage() {
 
     setLoading(true);
     try {
-      const code = generateCode();
+      const key = generateKey();
       const encryptedContent =
         input.kind === 'text'
-          ? await encryptSecret(input.content, code)
-          : await encryptFile(input.file, code);
+          ? await encryptSecret(input.content, key)
+          : await encryptFile(input.file, key);
 
       const response = await fetch('/api/secrets', {
         method: 'POST',
@@ -39,9 +36,11 @@ export default function MainPage() {
 
       if (!response.ok) throw new Error('Failed to create secret');
 
-      const data = (await response.json()) as SecretResponse;
-      data.code = code;
-      setSecretData(data);
+      const data = (await response.json()) as { shareUrl: string; expiresAt: number };
+      setSecretData({
+        combinedUrl: `${data.shareUrl}#k=${key}`,
+        expiresAt: data.expiresAt,
+      });
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to create secret. Please try again.');
@@ -55,8 +54,8 @@ export default function MainPage() {
       <div className="bg-white rounded-lg md:rounded-xl shadow-2xl p-5 md:p-10 max-w-2xl w-full">
         <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">Share a Secret</h1>
         {secretData ? (
-          <ShareResult 
-            data={secretData} 
+          <ShareResult
+            data={secretData}
             onCreateNew={() => setSecretData(null)}
           />
         ) : (

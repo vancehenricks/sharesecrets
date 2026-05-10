@@ -2,7 +2,7 @@
 
 ## Summary
 
-Share Secrets is designed with privacy and minimal data collection in mind. The core principle is **zero-trust**: encryption and decryption occur entirely in the user's browser. The server never receives plaintext secrets or user passphrases.
+Share Secrets is designed with privacy and minimal data collection in mind. The core principle is **zero-trust**: encryption and decryption occur entirely in the user's browser. The server never receives plaintext secrets or encryption keys.
 
 
 ## What We Store
@@ -15,7 +15,7 @@ Share Secrets is designed with privacy and minimal data collection in mind. The 
 
 ## What We Do Not Collect
 
-- Plaintext secrets, user passphrases, plaintext files, or filenames
+- Plaintext secrets, encryption keys, plaintext files, or filenames
 - Names, email addresses, or other personal identifiers
 - Persistent analytics or user-tracking data
 

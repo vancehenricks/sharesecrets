@@ -2,10 +2,10 @@
 
 Share Secrets makes it trivial to share secrets safely with a single-use link. Links expire by default after 5 minutes and can only be viewed once.
 
-Key idea: Zero-trust by design — all encryption and decryption happen in the browser. The server stores only ciphertext and never sees plaintext or the user's passphrase.
+Key idea: Zero-trust by design — all encryption and decryption happen in the browser. The server stores only ciphertext and never sees plaintext or the encryption key.
 
 ## Features
-- Client-side encryption (AES-256-GCM) — secrets are encrypted in-browser before upload
+- Client-side encryption (AES-256-GCM) — secrets are encrypted in-browser before upload using a randomly generated 256-bit key
 - File uploads (client-side encrypted) — upload files up to 1 MB; files are encrypted in-browser and stored as ciphertext just like text secrets
 - One-time access: a secret can be retrieved exactly once
 - Automatic expiration (default: 5 minutes)
@@ -13,19 +13,18 @@ Key idea: Zero-trust by design — all encryption and decryption happen in the b
 - Open source (MIT)
 
 ## Security & privacy
-- Zero-trust server: the server stores ciphertext only. If the server is compromised, attackers cannot read secrets without the client-side key.
-- Secrets are decrypted only in the browser. Do not send passphrases or plaintext to the server.
-- Follow safe sharing practices: transmit the share link and the code separately when sharing.
+- Zero-trust server: the server stores ciphertext only. If the server is compromised, attackers cannot read secrets without the encryption key.
+- The encryption key is generated in the browser and embedded in the share link after the `#` fragment — it is never sent to the server.
+- Secrets are decrypted only in the browser.
 
-### Combined link (optional)
-Example: https://site/s/<id>#c=123456
+### How the link works
+Example: `https://site/share/<id>#k=<base64url-key>`
 
-Why fragments
-URL fragments (the part after #) are not sent in HTTP requests, so servers and proxies don't see the code. This reduces server-side logging and referrer leakage.
+The part after `#` (the URL fragment) is not included in HTTP requests, so the server and any proxies never see the encryption key. The recipient's browser reads the key directly from the fragment and decrypts the secret locally.
 
-Trade-offs and safety:
-- Fragments are visible to client-side JS, extensions, browser history, and screenshots; they can be leaked if read/transmitted.
-- Use combined links only when convenience outweighs leakage risk. For maximum privacy, share link and code separately.
+Trade-offs to be aware of:
+- The full link (including fragment) may appear in browser history, system clipboard, or screenshots.
+- Anyone with the link can decrypt the secret — treat it like a password and share it only through trusted channels.
 
 ## Quickstart
 

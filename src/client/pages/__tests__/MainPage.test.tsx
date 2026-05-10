@@ -4,21 +4,21 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import MainPage from '../MainPage';
 import * as encryptionUtils from '../../utils/encryption';
 
-// Mock fetch and encryption utils
 global.fetch = jest.fn();
 jest.mock('../../utils/encryption');
 
+const FAKE_KEY = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+
 beforeEach(() => {
   jest.clearAllMocks();
-  // Default mock implementations
-  (encryptionUtils.generateCode as jest.Mock).mockReturnValue('123456');
+  (encryptionUtils.generateKey as jest.Mock).mockReturnValue(FAKE_KEY);
   (encryptionUtils.encryptSecret as jest.Mock).mockResolvedValue('encrypted-text');
   (encryptionUtils.encryptFile as jest.Mock).mockResolvedValue('encrypted-file');
 });
 
 describe('MainPage', () => {
   describe('text secret submission', () => {
-    it('submits text secret and displays result', async () => {
+    it('submits text secret and displays combined link', async () => {
       const mockResponse = {
         id: 'secret-123',
         shareUrl: 'https://example.com/share/secret-123',
@@ -33,23 +33,19 @@ describe('MainPage', () => {
 
       render(<MainPage />);
 
-      const textarea = screen.getByPlaceholderText(/enter your secret/i) as HTMLTextAreaElement;
+      const textarea = screen.getByPlaceholderText(/enter your secret/i);
       fireEvent.change(textarea, { target: { value: 'test secret' } });
 
       const submitBtn = screen.getByRole('button', { name: /generate share link/i });
       fireEvent.click(submitBtn);
 
       await waitFor(() => {
-        expect(screen.getByDisplayValue(mockResponse.shareUrl)).toBeInTheDocument();
+        expect(screen.getByDisplayValue(`${mockResponse.shareUrl}#k=${FAKE_KEY}`)).toBeInTheDocument();
       });
 
-      // Verify fetch was called with encrypted content
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/secrets',
-        expect.objectContaining({
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        })
+        expect.objectContaining({ method: 'POST', headers: { 'Content-Type': 'application/json' } })
       );
     });
 
@@ -66,9 +62,7 @@ describe('MainPage', () => {
 
     it('shows error when API call fails', async () => {
       jest.spyOn(window, 'alert').mockImplementation();
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: false,
-      });
+      (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: false });
 
       render(<MainPage />);
 
@@ -79,9 +73,7 @@ describe('MainPage', () => {
       fireEvent.click(submitBtn);
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith(
-          'Failed to create secret. Please try again.'
-        );
+        expect(window.alert).toHaveBeenCalledWith('Failed to create secret. Please try again.');
       });
 
       (window.alert as jest.Mock).mockRestore();
@@ -100,9 +92,7 @@ describe('MainPage', () => {
       fireEvent.click(submitBtn);
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith(
-          'Failed to create secret. Please try again.'
-        );
+        expect(window.alert).toHaveBeenCalledWith('Failed to create secret. Please try again.');
       });
 
       (window.alert as jest.Mock).mockRestore();
@@ -110,7 +100,7 @@ describe('MainPage', () => {
   });
 
   describe('file secret submission', () => {
-    it('submits file and displays result', async () => {
+    it('submits file and displays combined link', async () => {
       const mockResponse = {
         id: 'file-secret-123',
         shareUrl: 'https://example.com/share/file-secret-123',
@@ -125,37 +115,25 @@ describe('MainPage', () => {
 
       const { container } = render(<MainPage />);
 
-      // Switch to file mode
       const fileModeBtn = screen.getByRole('button', { name: /file/i });
       fireEvent.click(fileModeBtn);
 
-      // Select a file
       const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
       const testFile = new File(['test file content'], 'test.txt', { type: 'text/plain' });
       fireEvent.change(fileInput, { target: { files: [testFile] } });
 
-      // Submit
       const submitBtn = screen.getByRole('button', { name: /generate share link/i });
       fireEvent.click(submitBtn);
 
       await waitFor(() => {
-        expect(screen.getByDisplayValue(mockResponse.shareUrl)).toBeInTheDocument();
+        expect(screen.getByDisplayValue(`${mockResponse.shareUrl}#k=${FAKE_KEY}`)).toBeInTheDocument();
       });
-
-      expect(global.fetch).toHaveBeenCalledWith(
-        '/api/secrets',
-        expect.objectContaining({
-          method: 'POST',
-        })
-      );
     });
   });
 
   describe('form state management', () => {
     it('shows "Generating..." when loading', async () => {
-      (global.fetch as jest.Mock).mockImplementation(
-        () => new Promise(() => {}) // Never resolves
-      );
+      (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
 
       render(<MainPage />);
 
@@ -171,9 +149,7 @@ describe('MainPage', () => {
     });
 
     it('disables submit button during loading', async () => {
-      (global.fetch as jest.Mock).mockImplementation(
-        () => new Promise(() => {}) // Never resolves
-      );
+      (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
 
       render(<MainPage />);
 
@@ -217,10 +193,9 @@ describe('MainPage', () => {
       fireEvent.click(submitBtn);
 
       await waitFor(() => {
-        expect(screen.getByDisplayValue(mockResponse.shareUrl)).toBeInTheDocument();
+        expect(screen.getByDisplayValue(`${mockResponse.shareUrl}#k=${FAKE_KEY}`)).toBeInTheDocument();
       });
 
-      // ShareForm should still be present but hidden by ShareResult
       expect(screen.queryByPlaceholderText(/enter your secret/i)).not.toBeInTheDocument();
     });
 
@@ -239,7 +214,6 @@ describe('MainPage', () => {
 
       render(<MainPage />);
 
-      // Submit text
       const textarea = screen.getByPlaceholderText(/enter your secret/i);
       fireEvent.change(textarea, { target: { value: 'test secret' } });
 
@@ -247,14 +221,12 @@ describe('MainPage', () => {
       fireEvent.click(submitBtn);
 
       await waitFor(() => {
-        expect(screen.getByDisplayValue(mockResponse.shareUrl)).toBeInTheDocument();
+        expect(screen.getByDisplayValue(`${mockResponse.shareUrl}#k=${FAKE_KEY}`)).toBeInTheDocument();
       });
 
-      // Click "Share Another Secret"
       const shareAnotherBtn = screen.getByRole('button', { name: /share another secret/i });
       fireEvent.click(shareAnotherBtn);
 
-      // Back to ShareForm
       await waitFor(() => {
         expect(screen.getByPlaceholderText(/enter your secret/i)).toBeInTheDocument();
       });
